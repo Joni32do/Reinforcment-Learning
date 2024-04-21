@@ -1,0 +1,117 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{bbm}
+\title{Reinforcement Learning - Exercise 1 - Solution}
+\author{Jonathan Schnitzler}
+\date{\today}
+\begin{document}
+\maketitle
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%    Problem 1
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Formulating Problems}
+
+\subsection*{a) The game of chess}
+
+\paragraph*{States}
+The position of all pieces on the board. A chess board is a 8x8 grid, in the beginning with 16 white and 16 black pieces. The state space is therefore quite large (an upper bound from around $\approx 10^45$, see \url{https://tromp.github.io/chess/chess.html}).
+
+\paragraph*{Actions}
+The possible moves of the current player. The number of possible moves is limited by the number of pieces on the board and the rules of chess.
+
+\paragraph*{Reward Signal}
+\begin{itemize}
+    \item win, lose or draw the game (by checkmate)
+    \item evaluate the current position of the board (e.g. material advantage, positional advantage)
+\end{itemize}
+
+
+
+
+\subsection*{b) A pick and place robot}
+
+\paragraph*{States}
+\begin{itemize}
+    \item position and orientation of the axes
+    \item is holding something
+    \item source of objects and destination
+\end{itemize}
+
+\paragraph*{Actions}
+\begin{itemize}
+    \item pick
+    \item place
+    \item repeat
+\end{itemize}
+
+
+\paragraph*{Reward Signal}
+\begin{itemize}
+    \item successfully pick and place an object
+    \item time to pick and place an object
+    \item lost an object
+\end{itemize}
+
+
+
+
+\subsection*{c) A drone which should stabelize in air}
+
+\paragraph*{States}
+\begin{itemize}
+    \item tilt angle
+\end{itemize}
+
+\paragraph*{Actions}
+\begin{itemize}
+    \item adapt speed of individual rotors
+\end{itemize}
+
+\paragraph*{Reward Signal}
+\begin{itemize}
+    \item time in air
+    \item minimize the tilt angle
+    \item minimize steering (and energy consumption)
+\end{itemize}
+
+
+\subsection*{d) Playing tetris}
+
+\paragraph*{States}
+\begin{itemize}
+    \item position of the falling block
+    \item position of the other blocks
+    \item preview of next block
+\end{itemize}
+
+
+\paragraph*{Actions}
+\begin{itemize}
+    \item move block left/right
+    \item rotate block
+\end{itemize}
+
+\paragraph*{Reward Signal}
+\begin{itemize}
+    \item clear a row
+    \item lose the game
+\end{itemize}
+
+
+
+
+
+\end{document}
