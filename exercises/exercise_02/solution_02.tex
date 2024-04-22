@@ -10,8 +10,10 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{bbm}
-\title{Reinforcement Learning \\ Exercise 1 - Solution}
-\author{Jonathan Schnitzler}
+\title{Reinforcement Learning \\ Exercise 2 - Solution}
+\author{Jonathan Schnitzler - st166934 \\
+ErickVillanuevaVillasenor - st190300 \\
+Erik Choquet - st160996}
 \date{\today}
 \begin{document}
 \maketitle
@@ -52,9 +54,9 @@ The possible moves of the current player. The number of possible moves is limite
 
 \paragraph*{Actions}
 \begin{itemize}
-    \item pick
-    \item place
-    \item repeat
+    \item pick an object
+    \item place an object
+    \item move
 \end{itemize}
 
 
@@ -73,6 +75,7 @@ The possible moves of the current player. The number of possible moves is limite
 \paragraph*{States}
 \begin{itemize}
     \item tilt angle
+    \item crashed
 \end{itemize}
 
 \paragraph*{Actions}
@@ -142,11 +145,25 @@ and the definition of the action-value function
 to show the relation. We use the law of total expectation to condition on the action $A_t = a$:
 \begin{align}
     v_\pi(s) &= \mathbb{E}_\pi[G_t | S_t = s] \\
-       &= \sum_a p(A_t = a | S_t = s) \mathbb{E}_\pi[G_t | S_t = s, A_t = a] \cdot 
+       &= \sum_a \pi(a|s) \mathbb{E}_\pi[G_t | S_t = s, A_t = a] \cdot \\
+       &= \sum_a \pi(a|s) q_\pi(s,a)
 \end{align}
 
 
-\paragraph*{c) Rephraze value function}
+\paragraph*{c) Rephrase value function}
+
+The bellman equation is given by
+\begin{equation}
+    v_\pi(s) = \sum_a \pi(a|s) \sum_{s',r} p(s',r|s,a) [r + \gamma v_\pi(s')]
+\end{equation}
+We can execute the sum over $r$ and note that the reward is dependent on $r(s, a, s')$ and the transition probability is dependent on $p(s'|s,a)$, i.e.
+\begin{align}
+    \sum_{s',r} p(s',r|s,a) r &= \sum_{s'} p(s'|s,a) r(s, a, s')
+\end{align}
+Which yields the rephrased value function
+\begin{equation}
+    v_\pi(s) = \sum_a \pi(a|s) \sum_{s'} p(s'|s,a) r(s[r(s, a, s') + \gamma v_\pi(s')]
+\end{equation}
 
 
 
@@ -154,15 +171,77 @@ to show the relation. We use the law of total expectation to condition on the ac
 
 \paragraph*{a) Number of policies}
 
-There are $4\cdot 4 = 16$ tiles, which are the states. There are four actions, namely up, down, left and right. If the policy is deterministic, then for each tile the decision tree branches into four additional options, i.e.
+There are $3\cdot 3 = 16$ tiles, which are the states. There are four actions, namely up, down, left and right. If the policy is deterministic, then for each tile the decision tree branches into four additional options, i.e.
 \begin{equation}
-    n_\pi = 4^{16} = 2^{32} \approx 4 \cdot 10^9
+    n_\pi = a^s = 4^{9} = 2^{18} = 262144
 \end{equation}
-which is doable for a computer but still kind of ridiculos.
+which is do-able for a computer but still kind of ridiculos.
+
+\paragraph*{b) Do you expect the behaviour?}
+
+\begin{figure}[H]
+    \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tabular}{c|c|c}
+    0 & 0 & 0.537 \\ \hline
+    0 & 0 & 1.477 \\ \hline              
+    0 & 0 & 5 \\
+    \end{tabular}
+    \caption{$v_\pi$ for $\pi =$Go left policy}
+    \label{tab:table1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tabular}{c|c|c}
+    0.414 & 0.775 & 1.311 \\ \hline
+    0.364 & 0.819 & 2.295 \\ \hline                 
+    0.132 & 0 & 5 \\
+    \end{tabular}
+    \caption{$v_\pi$ for $\pi =$Go right policy}
+    \label{tab:table2}
+    \end{minipage}
+    \end{figure}
 
 
-\paragraph*{b) See Code}
+\paragraph*{c) Bruteforce}
+
+There are two optimal policies for the given optimal value function $v_*$, which are shown in Table \ref{tab:table3}. Namely, 
+
+\begin{figure}[H]
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tabular}{c|c|c}
+    0.498 & 0.832 & 1.311 \\ \hline
+    0.536 & 0.977 & 2.295 \\ \hline                 
+    0.306 & 0 & 5 \\
+    \end{tabular}
+    \caption{Optimal value $v_*$}
+    \label{tab:table3}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tabular}{c|c|c}
+     1/2 & 2 & 2 \\ \hline
+     3 & 3 & 2 \\ \hline
+     0 & 1 & 1
+    \end{tabular}
+    \caption{Best policy $\pi_*$}
+    \label{tab:bestPol}
+\end{minipage}    
+\end{figure}
 
 
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{IceIceBaby.png}
+\caption{3x3 gridworld of icy lake}
+\label{fig:ice}
+\end{figure}
+
+
+\paragraph*{d) Is Bruteforce a good idea?}
+
+No. In general it is not feasable to Bruteforce any algorithm, which scales exponentially $O(e^n)$. For larger maps this is the case. The assumption for our solution is to calculate every policy and find the optimal one. Other algorithms should be used, which dont calculate the whole space. 
 \end{document}

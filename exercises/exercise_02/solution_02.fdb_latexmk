@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1713774043 "/home/jonat/Documents/01_Studium/Reinforcement-Learning/Exercises/exercise_02/solution_02.tex" "solution_02.pdf" "solution_02" 1713774044
+["pdflatex"] 1713796664 "/home/jonat/Documents/01_Studium/Reinforcement-Learning/exercises/exercise_02/solution_02.tex" "solution_02.pdf" "solution_02" 1713796664
   "/etc/texmf/web2c/texmf.cnf" 1699144564 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/jonat/Documents/01_Studium/Reinforcement-Learning/Exercises/exercise_02/solution_02.tex" 1713774043 4359 9a9fea028375b48c439606869bc383cf ""
+  "/home/jonat/Documents/01_Studium/Reinforcement-Learning/exercises/exercise_02/solution_02.tex" 1713796664 6868 09c04072c611bb95d13a326c03406155 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm" 1136768653 1536 e07581a4bb3136ece9eeb4c3ffab8233 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -38,6 +38,7 @@
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1248133631 32726 0a1aea6fcd6468ee2cf64d891f5c43c8 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb" 1248133631 32915 7bf7720c61a5b3a7ff25b0964421c9b6 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb" 1248133631 24287 6b803fa9eb1ddff9112e00519b09dd9e ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1248133631 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
@@ -212,9 +213,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1704702967 4379155 98693266ff65f58d9f98aff394de12d2 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1710660779 2799747 372f82289d3c2e17ab30db582b40c792 ""
-  "solution_02.aux" 1713774044 1039 34bc836a8128ad8784a9c6e459c25afc "pdflatex"
-  "solution_02.out" 1713774044 454 3c96458f1316e34b79aedb61baa9dd90 "pdflatex"
-  "solution_02.tex" 1713774043 4359 9a9fea028375b48c439606869bc383cf ""
+  "IceIceBaby.png" 1713794189 8826 6f1fa2774ae000e36d2f21bad890448f ""
+  "solution_02.aux" 1713796664 2078 4d1dddb41d3d2d23ec68bcb9a37899ba "pdflatex"
+  "solution_02.out" 1713796664 454 3c96458f1316e34b79aedb61baa9dd90 "pdflatex"
+  "solution_02.tex" 1713796664 6868 09c04072c611bb95d13a326c03406155 ""
   (generated)
   "solution_02.aux"
   "solution_02.log"

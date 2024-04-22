@@ -1,5 +1,6 @@
 import gymnasium as gym
 import numpy as np
+from tqdm import tqdm
 import subprocess
 
 subprocess.run("export LD=PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so6", shell=True)
@@ -11,13 +12,13 @@ custom_map3x3 = [
     'FFF',
     'FHG',
 ]
-env = gym.make("FrozenLake-v0", desc=custom_map3x3)
+env = gym.make("FrozenLake-v1", desc=custom_map3x3, render_mode="human")
 # TODO: Uncomment the following line to try the default map (4x4):
-env = gym.make("FrozenLake-v0")
+# env = gym.make("FrozenLake-v1", render_mode="human")
 
 # Uncomment the following lines for even larger maps:
-#random_map = generate_random_map(size=5, p=0.8)
-#env = gym.make("FrozenLake-v0", desc=random_map)
+# random_map = generate_random_map(size=5, p=0.8)
+# env = gym.make("FrozenLake-v0", desc=random_map)
 
 # Init some useful variables:
 n_states = env.observation_space.n
@@ -59,13 +60,52 @@ def value_policy(policy):
 
 def bruteforce_policies():
     terms = terminals()
+    number_of_non_terminal_states = n_states - len(terms)
     optimalpolicies = []
 
-    policy = np.zeros(n_states, dtype=np.int)  # in the discrete case a policy is just an array with action = policy[state]
-    optimalvalue = np.zeros(n_states)
-    
+    # policy = np.zeros(
+    #     n_states, dtype=int
+    # )  # in the discrete case a policy is just an array with action = policy[state]
+    # optimalvalue = np.zeros(n_states)
+
     # TODO: implement code that tries all possible policies, calculates the values using def value_policy().
     #       Find the optimal values and the optimal policies to answer the exercise questions.
+    all_policies = []
+    number_of_policies = n_actions**number_of_non_terminal_states
+
+    for i in tqdm(range(number_of_policies)):
+        # Initialize an empty list to store the current policy
+        policy = []
+
+        # For each state, determine the corresponding action
+        # We do this by dividing by the appropriate power of n_actions
+        # and taking the modulus with n_actions
+        value = i
+        for j in range(number_of_non_terminal_states):
+            # Find the action for this state
+            action = value % n_actions  # Get the remainder to determine the action
+            policy.append(action)
+
+            # Update the value to get the next action
+            value = value // n_actions
+
+        all_policies.append(policy)
+
+    # fill spots of terminal states with random action (it doesnt matter)
+    for term in terms:
+        for policy in all_policies:
+            policy.insert(term, 1)
+
+    all_policies = np.array(all_policies)
+
+    values = np.array([value_policy(policy) for policy in tqdm(all_policies)])
+    values_sum = values.sum(axis=1)
+    optimalvalue_index = np.argmax(values_sum)
+    optimalvalue = values[optimalvalue_index]
+
+    matches = [np.array_equal(optimalvalue, sub_array) for sub_array in values]
+    optimalpolicies = all_policies[matches]
+    
 
     print("Optimal value function:")
     print(optimalvalue)
@@ -73,18 +113,20 @@ def bruteforce_policies():
     print(len(optimalpolicies))
     print("optimal policies:")
     print(np.array(optimalpolicies))
+
     return optimalpolicies
 
 
 def main():
     # print the environment
     print("current environment: ")
+    env.reset()
     env.render()
     print("")
 
     # Here a policy is just an array with the action for a state as element
-    policy_left = np.zeros(n_states, dtype=np.int)  # 0 for all states
-    policy_right = np.ones(n_states, dtype=np.int) * 2  # 2 for all states
+    policy_left = np.zeros(n_states, dtype=int)  # 0 for all states
+    policy_right = np.ones(n_states, dtype=int) * 2  # 2 for all states
 
     # Value functions:
     print("Value function for policy_left (always going left):")
@@ -96,17 +138,18 @@ def main():
 
 
     # This code can be used to "rollout" a policy in the environment:
-    """
     print("rollout policy:")
     maxiter = 100
-    state = env.reset()
-    for i in range(maxiter):
-        new_state, reward, done, info = env.step(optimalpolicies[0][state])
-        env.render()
-        state=new_state
-        if done:
-            print("Finished episode")
-            break"""
+    for i in range(10):
+        state, _ = env.reset()
+        for i in range(maxiter):
+            
+            new_state, reward, terminated, truncanated, info = env.step(optimalpolicies[0][state])
+            env.render()
+            state=new_state
+            if terminated:
+                print("Finished episode")
+                break
 
 
 if __name__ == "__main__":
