@@ -13,7 +13,7 @@
 \title{Reinforcement Learning \\ Exercise 2 - Solution}
 \author{Jonathan Schnitzler - st166934 \\
 ErickVillanuevaVillasenor - st190300 \\
-Erik Choquet - st160996}
+Eric Choquet - st160996}
 \date{\today}
 \begin{document}
 \maketitle
@@ -75,6 +75,8 @@ The possible moves of the current player. The number of possible moves is limite
 \paragraph*{States}
 \begin{itemize}
     \item tilt angle
+    \item velocity in the three axes
+    \item angular velocity
     \item crashed
 \end{itemize}
 
@@ -162,7 +164,7 @@ We can execute the sum over $r$ and note that the reward is dependent on $r(s, a
 \end{align}
 Which yields the rephrased value function
 \begin{equation}
-    v_\pi(s) = \sum_a \pi(a|s) \sum_{s'} p(s'|s,a) r(s[r(s, a, s') + \gamma v_\pi(s')]
+    v_\pi(s) = \sum_a \pi(a|s) \sum_{s'} p(s'|s,a) [r(s, a, s') + \gamma v_\pi(s')]
 \end{equation}
 
 
@@ -171,14 +173,24 @@ Which yields the rephrased value function
 
 \paragraph*{a) Number of policies}
 
-There are $3\cdot 3 = 16$ tiles, which are the states. There are four actions, namely up, down, left and right. If the policy is deterministic, then for each tile the decision tree branches into four additional options, i.e.
+There are $3\cdot 3 = 9$ tiles, which are the states. There are four actions, namely up, down, left and right. If the policy is deterministic, then for each tile the decision tree branches into four additional options, i.e.
 \begin{equation}
     n_\pi = a^s = 4^{9} = 2^{18} = 262144
 \end{equation}
 which is do-able for a computer but still kind of ridiculos.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth]{IceIceBaby.png}
+    \caption{3x3 gridworld of icy lake}
+    \label{fig:ice}
+\end{figure}
+
+
+
 \paragraph*{b) Do you expect the behaviour?}
 
+That the left policy can only fail by starting on the left of the object is reasonable. I would have expected that tile $(x, y) = (1, 1)$ would have a higher value  
 \begin{figure}[H]
     \begin{minipage}{0.45\textwidth}
     \centering
@@ -224,21 +236,16 @@ There are two optimal policies for the given optimal value function $v_*$, which
     \begin{tabular}{c|c|c}
      1/2 & 2 & 2 \\ \hline
      3 & 3 & 2 \\ \hline
-     0 & 1 & 1
+     0 & - & -
     \end{tabular}
-    \caption{Best policy $\pi_*$}
+    \caption{Best policies $\pi_*$}
     \label{tab:bestPol}
 \end{minipage}    
 \end{figure}
 
 
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.5\textwidth]{IceIceBaby.png}
-\caption{3x3 gridworld of icy lake}
-\label{fig:ice}
-\end{figure}
+
 
 
 \paragraph*{d) Is Bruteforce a good idea?}
