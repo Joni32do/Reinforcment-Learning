@@ -1,0 +1,7 @@
+# Don't track latex auxiliary files
+*.log
+*.fls
+*.out
+*.aux
+*.fdb_latexmk
+*.synctex.gz
