@@ -36,4 +36,61 @@ Inspired by the lecture for the Bellman expectation backup operator, we will sim
     &\leq \gamma \| \max_a \sum_{s', r} p(s', r|s,a) \|v(s') - w(s')\|_\infty \| \\
     &\leq \gamma \|v - w\|_\infty
 \end{align}
+
+\paragraph*{b) Bounding general finite MDPs}
+This is quite simple by imagining, a sequence of actions for which always the best reward $r_{\text{max}}$ or always the worst outcome, i.e. $r_{\text{min}}$ occurs. We can use the geometric sum formular for $\gamma < 1$
+
+\begin{align}
+    v_\pi(s) &=  \mathbb{E}_\pi[G_t | S_t = s] \\
+    &= \mathbb{E}_\pi [\sum_{i=0}^\infty \gamma R_{t+i+1}| S_t = s] \\
+    &\leq \sum_{i=0}^\infty \gamma r_{\text{max}} \\
+    &=r_{\text{max}} \frac{1}{1 - \gamma}
+\end{align}
+which reversly holds for the minimum with a lower bound
+\begin{align}
+    v_\pi(s) &=  \mathbb{E}_\pi[G_t | S_t = s] \\
+    &= \mathbb{E}_\pi [\sum_{i=0}^\infty \gamma R_{t+i+1}| S_t = s] \\
+    &\geq \sum_{i=0}^\infty \gamma r_{\text{min}} \\
+    &=r_{\text{min}} \frac{1}{1 - \gamma}
+\end{align}
+ This yields
+\begin{equation}
+    \frac{r_{\text{min}}}{1- \gamma} \leq v(s) \leq \frac{r_{\text{max}}}{1 - \gamma}
+\end{equation}
+From this we can follow from arbitrary $v(s)$ and $v(s')$ by assuming without loss of generality taht $v(s) \geq v(s')$ (since the naming is arbitrary)
+\begin{align}
+    |v(s) - v(s')| &= v(s) - v(s') \\
+    &\leq  \frac{r_{\text{max}}}{1 - \gamma} - v(s') \\ 
+    &\leq  \frac{r_{\text{max}}}{1 - \gamma} -  \frac{r_{\text{min}}}{1- \gamma} \\ 
+    &= \frac{r_{\text{max}}-r_{\text{min}}}{1- \gamma}
+\end{align}
+which concludes the proof.
+
+
+
+\section*{Value Iteration}
+
+\subsection*{a) Implementation of the value function}
+The value function is initialized with zero-values 
+\begin{equation}
+    V(s) = 0 \quad \forall_{s \in \mathcal{S}}
+\end{equation}
+and $\gamma = 0.8$, $\theta=10^{-8}$. \\
+
+
+\begin{figure}[H]
+    \centering
+        \begin{tabular}{c|c|c}
+        0.498 & 0.832 & 1.311 \\ \hline
+        0.536 & 0.977 & 2.295 \\ \hline                 
+        0.306 & 0 & 5 \\
+        \end{tabular}
+        \caption{Optimal value $v_*$}
+        \label{tab:table3}  
+\end{figure}
+
+\paragraph*{b) Optimal policy of value function}
+
+
+
 \end{document}
