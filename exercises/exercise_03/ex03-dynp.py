@@ -1,5 +1,8 @@
-import gymnasium as gym
+import gym
 import numpy as np
+import itertools
+import time
+from tqdm import tqdm
 
 custom_map3x3 = [
     'SFF',
@@ -9,7 +12,7 @@ custom_map3x3 = [
 #env = gym.make("FrozenLake-v0", desc=custom_map3x3)
 
 # Init environment
-env = gym.make("FrozenLake-v1")
+env = gym.make("FrozenLake-v0")
 
 # you can set it to deterministic with:
 #env = gym.make("FrozenLake-v0", is_slippery=False)
@@ -49,35 +52,26 @@ def value_iteration():
     # TODO: implement the value iteration algorithm
     # Hint: env.P[state][action] gives you tuples (p, n_state, r, is_terminal), which tell you the probability p that you end up in the next state n_state and receive reward r
     delta = theta + 1
+    policy = np.zeros(n_states, dtype=int)
+    iterations = 0
     while theta <= delta:
+        delta = 0
         for s in range(n_states):
             v_old = V_states[s]
-            v_tilde = -1
+            v_max_a = 0
             for a in range(n_actions):
-                p, n_state, r, is_terminal = env.P[s][a]
-                v_tilde = p*(r + gamma*V_states[s])
-                V_states[s] = np.max(V_states[s], v_tilde)
-
-            delta = np.max(delta, abs(V_states[s]-v_old))
-
-
-    # TODO: After value iteration algorithm, obtain policy and return it
-    policy = np.zeros(n_states, dtype=int)
-    for s in range(n_states):
-        for a in range(n_actions):
-            # test for all four (or less direction, if less are possible)
-            # what the value is and go into the direction of most value
-            current_choice_action = 0
-            current_choice_value = -np.infty #hack
-            p, n_state, r, is_terminal = env.P[s][a]
-            if p > 0 and not is_terminal:
-                if V_states[n_state] > current_choice_value:
-                    current_choice_action = n_state
-
-
-
-
-
+                v_sum = 0
+                for p, n_state, r, is_terminal in env.P[s][a]:
+                    v_sum += p*(r + gamma*V_states[n_state])
+                
+                if v_sum > v_max_a:
+                    v_max_a = v_sum
+                    policy[s] = a
+            V_states[s] = v_max_a
+            delta = max(delta, abs(V_states[s]-v_old))
+        iterations += 1
+        print(delta)
+    print("Iterations: ", iterations)
     return policy
 
 
@@ -85,6 +79,8 @@ def main():
     # print the environment
     print("current environment: ")
     env.render()
+    # Wait for 5 seconds
+    time.sleep(5)
     dims = env.desc.shape
     print()
 

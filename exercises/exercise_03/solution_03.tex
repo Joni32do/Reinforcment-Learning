@@ -10,9 +10,8 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{bbm}
-\title{Reinforcement Learning \\ Exercise 2 - Solution}
+\title{Reinforcement Learning \\ Exercise 3 - Solution}
 \author{Jonathan Schnitzler - st166934 \\
-ErickVillanuevaVillasenor - st190300 \\
 Eric Choquet - st160996}
 \date{\today}
 \begin{document}
@@ -31,9 +30,10 @@ fullfills the $\gamma$-contraction property, namely
 Inspired by the lecture for the Bellman expectation backup operator, we will similarly use the definition of the infinity norm to show the contraction property
 \begin{align}
     \|\mathcal{T}v - \mathcal{T}w\|_\infty &= \| \max_a \sum_{s', r} p(s', r|s,a)[r + \gamma v(s')] - \max_a \sum_{s', r} p(s', r|s,a)[r + \gamma w(s')] \| \\
-    &\leq \| \max_a \sum_{s', r} p(s', r|s,a)[r + \gamma v(s') - (r + \gamma w(s'))] \| \\
+    &= \| \max_a \sum_{s', r} p(s', r|s,a)[r + \gamma v(s') - (r + \gamma w(s'))] \| \\
     &=\gamma \| \max_a \sum_{s', r} p(s', r|s,a) [v(s') - w(s')] \| \\
     &\leq \gamma \| \max_a \sum_{s', r} p(s', r|s,a) \|v(s') - w(s')\|_\infty \| \\
+    &= \gamma \|v(s') - w(s')\|_\infty \| \max_a \sum_{s', r} p(s', r|s,a)  \| \\
     &\leq \gamma \|v - w\|_\infty
 \end{align}
 
@@ -42,15 +42,15 @@ This is quite simple by imagining, a sequence of actions for which always the be
 
 \begin{align}
     v_\pi(s) &=  \mathbb{E}_\pi[G_t | S_t = s] \\
-    &= \mathbb{E}_\pi [\sum_{i=0}^\infty \gamma R_{t+i+1}| S_t = s] \\
-    &\leq \sum_{i=0}^\infty \gamma r_{\text{max}} \\
+    &= \mathbb{E}_\pi [\sum_{i=0}^\infty \gamma^i R_{t+i+1}| S_t = s] \\
+    &\leq \sum_{i=0}^\infty \gamma^i r_{\text{max}} \\
     &=r_{\text{max}} \frac{1}{1 - \gamma}
 \end{align}
 which reversly holds for the minimum with a lower bound
 \begin{align}
     v_\pi(s) &=  \mathbb{E}_\pi[G_t | S_t = s] \\
-    &= \mathbb{E}_\pi [\sum_{i=0}^\infty \gamma R_{t+i+1}| S_t = s] \\
-    &\geq \sum_{i=0}^\infty \gamma r_{\text{min}} \\
+    &= \mathbb{E}_\pi [\sum_{i=0}^\infty \gamma^i R_{t+i+1}| S_t = s] \\
+    &\geq \sum_{i=0}^\infty \gamma^i r_{\text{min}} \\
     &=r_{\text{min}} \frac{1}{1 - \gamma}
 \end{align}
  This yields
@@ -75,22 +75,38 @@ The value function is initialized with zero-values
 \begin{equation}
     V(s) = 0 \quad \forall_{s \in \mathcal{S}}
 \end{equation}
-and $\gamma = 0.8$, $\theta=10^{-8}$. \\
-
-
-\begin{figure}[H]
-    \centering
-        \begin{tabular}{c|c|c}
-        0.498 & 0.832 & 1.311 \\ \hline
-        0.536 & 0.977 & 2.295 \\ \hline                 
-        0.306 & 0 & 5 \\
-        \end{tabular}
-        \caption{Optimal value $v_*$}
-        \label{tab:table3}  
-\end{figure}
+and $\gamma = 0.8$, $\theta=10^{-8}$. It converges in 43 Iterations
 
 \paragraph*{b) Optimal policy of value function}
-
+\begin{figure}[H]
+    \begin{minipage}{0.45\textwidth}
+    \centering
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{c|c|c|c}
+                0.015 & 0.016 & 0.027 & 0.016 \\ \hline
+                0.027 & 0.000 & 0.060 & 0.000 \\ \hline
+                0.058 & 0.134 & 0.197 & 0.000 \\ \hline
+                0.000 & 0.247 & 0.544 & 0.000 \\
+            \end{tabular}
+            \caption{Optimal value $v_*$}
+            \label{tab:table3}  
+        \end{table}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \begin{table}[H]
+        \centering
+        \begin{tabular}{c|c|c|c}
+        ↓ &↑& →& ↑ \\ \hline
+        ← &H& ←& H \\ \hline
+        ↑ &↓& ←& H \\ \hline
+        H &→& ↓& G
+        \end{tabular}
+        \caption{Optimal policy $\pi_*$}
+        \label{tab:pi_star}
+        \end{table}
+    \end{minipage}
+\end{figure}
 
 
 \end{document}

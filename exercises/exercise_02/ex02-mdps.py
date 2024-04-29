@@ -79,7 +79,6 @@ def bruteforce_policies():
     for i in tqdm(range(number_of_policies)):
         # Initialize an empty list to store the current policy
         policy = []
-
         # For each state, determine the corresponding action
         # We do this by dividing by the appropriate power of n_actions
         # and taking the modulus with n_actions
