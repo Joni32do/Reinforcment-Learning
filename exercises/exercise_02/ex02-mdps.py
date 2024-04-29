@@ -32,8 +32,10 @@ gamma = 0.8
 
 """ This is a helper function that returns the transition probability matrix P for a policy """
 def trans_matrix_for_policy(policy):
+    s_term = terminals()
+    possible_states = [s for s in range(n_states) if s not in s_term]
     transitions = np.zeros((n_states, n_states))
-    for s in range(n_states):
+    for s in possible_states:
         probs = env.P[s][policy[s]]
         for el in probs:
             transitions[s, el[1]] += el[0]
@@ -52,6 +54,7 @@ def terminals():
 
 def value_policy(policy):
     P = trans_matrix_for_policy(policy)
+    P[-1] = 0
     # TODO: calculate and return v
     # (P, r and gamma already given)
     v = np.linalg.solve(np.eye(n_states) - gamma * P, r)
