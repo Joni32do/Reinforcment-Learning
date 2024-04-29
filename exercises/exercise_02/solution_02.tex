@@ -251,7 +251,8 @@ There are two optimal policies for the given optimal value function $v_*$, which
 \paragraph*{d) Is Bruteforce a good idea?}
 
 No. In general it is not feasable to Bruteforce any algorithm, which scales exponentially $O(e^n)$. For larger maps this is the case. The assumption for our solution is to calculate every policy and find the optimal one. Other algorithms should be used, which dont calculate the whole space. 
-\end{document}
 
-\paragraph*{NOTE:}
+\paragraph*{NOTE}
 All of the value functions should be devided by a fifth, because in terminal states it alows to go to terminal states again. Reworked the helper function \texttt{trans_matrix_for_policy}.
+
+\end{document}
