@@ -1,6 +1,7 @@
 import gym
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 env = gym.make('Blackjack-v0')
 
@@ -38,8 +39,24 @@ def policy_evaluation():
     visits = np.zeros((10, 10, 2))
     maxiter = 10000  # use whatever number of iterations you want
     for i in range(maxiter):
+        # always first visit, since there are no cyclic states in a single blackjack game 
         G = 0
         states, ret = single_run_20()
+        for state in states:
+            V[state[0]][state[1]][int(state[2])] += ret
+            visits[state[0]][state[1]][int(state[2])] += 1
+    V = np.divide(V, visits, where=visits != 0)
+
+
+    # plot via plt
+    fig, ax = plt.subplots(1, 2)
+    ax[0].surface(V[:, :, 0])
+    ax[0].title("Usable Ace")
+    ax[1].surface(V[:, :, 1])
+    ax[1].title("No Usable Ace")
+    plt.show()
+
+
 
 
 
@@ -53,7 +70,7 @@ def monte_carlo_es():
     returns = np.zeros((10, 10, 2, 2))
     visits = np.zeros((10, 10, 2, 2))
     maxiter = 100000000  # use whatever number of iterations you want
-    for i in range(maxiter):
+    for i in tqdm(range(maxiter)):
         if i % 100000 == 0:
             print("Iteration: " + str(i))
             print(pi[:, :, 0])
@@ -62,7 +79,7 @@ def monte_carlo_es():
 
 def main():
     # single_run_20()
-    # policy_evaluation()
+    policy_evaluation()
     # monte_carlo_es()
 
 
