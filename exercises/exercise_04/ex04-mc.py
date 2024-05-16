@@ -16,18 +16,21 @@ def single_run_20():
     states = []
     ret = 0.
     while not done:
-        print("observation:", obs)
+        # print("observation:", obs)
         states.append(obs)
         if obs[0] >= 20:
-            print("stick")
+            # print("stick")
             obs, reward, done, _ = env.step(0)  # step=0 for stick
         else:
-            print("hit")
+            # print("hit")
             obs, reward, done, _ = env.step(1)  # step=1 for hit
-        print("reward:", reward, "\n")
+        # print("reward:", reward, "\n")
         ret += reward  # Note that gamma = 1. in this exercise
-    print("final observation:", obs)
+    # print(sur"final observation:", obs)
     return states, ret
+
+def state_to_index(state):
+    return state[0] - 12, state[1] - 1, int(state[2])
 
 
 def policy_evaluation():
@@ -43,17 +46,20 @@ def policy_evaluation():
         G = 0
         states, ret = single_run_20()
         for state in states:
-            V[state[0]][state[1]][int(state[2])] += ret
-            visits[state[0]][state[1]][int(state[2])] += 1
+            V[state_to_index(state)] += ret
+            visits[state_to_index(state)] += 1
     V = np.divide(V, visits, where=visits != 0)
 
 
     # plot via plt
-    fig, ax = plt.subplots(1, 2)
-    ax[0].surface(V[:, :, 0])
-    ax[0].title("Usable Ace")
-    ax[1].surface(V[:, :, 1])
-    ax[1].title("No Usable Ace")
+    fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "3d"})
+    player_sum = np.arange(12, 22)
+    dealer_card = np.arange(1, 11)
+    X, Y = np.meshgrid(player_sum, dealer_card)
+    ax[0].plot_surface(X, Y, V[:, :, 0])
+    ax[0].set_title("Usable Ace")
+    ax[1].plot_surface(X, Y, V[:, :, 1])
+    ax[1].set_title("No Usable Ace")
     plt.show()
 
 
