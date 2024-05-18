@@ -6,6 +6,10 @@ from tqdm import tqdm
 env = gym.make('Blackjack-v0')
 
 
+def state_to_index(state):
+    return state[0] - 12, state[1] - 1, int(state[2])
+
+
 def single_run_20():
     """ run the policy that sticks for >= 20 """
     # This example shows how to perform a single run with the policy that hits for player_sum >= 20
@@ -29,8 +33,19 @@ def single_run_20():
     # print(sur"final observation:", obs)
     return states, ret
 
-def state_to_index(state):
-    return state[0] - 12, state[1] - 1, int(state[2])
+def single_run_pi(pi):
+    obs = env.reset()  # obs is a tuple: (player_sum, dealer_card, useable_ace)
+    done = False
+    states = []
+    ret = 0.
+    while not done:
+        states.append(obs)
+        action = int(pi[state_to_index(obs)])
+        obs, reward, done, _ = env.step(action)
+        ret += reward
+    return states, ret
+
+
 
 
 def policy_evaluation():
@@ -40,8 +55,8 @@ def policy_evaluation():
     V = np.zeros((10, 10, 2))
     returns = np.zeros((10, 10, 2))
     visits = np.zeros((10, 10, 2))
-    maxiter = 10000  # use whatever number of iterations you want
-    for i in range(maxiter):
+    maxiter = 100000  # use whatever number of iterations you want
+    for i in tqdm(range(maxiter)):
         # always first visit, since there are no cyclic states in a single blackjack game 
         G = 0
         states, ret = single_run_20()
@@ -70,23 +85,44 @@ def monte_carlo_es():
     """ Implementation of Monte Carlo ES """
     # suggested dimensionality: player_sum (12-21), dealer card (1-10), useable ace (true/false)
     # possible variables to use:
-    pi = np.zeros((10, 10, 2))
-    # Q = np.zeros((10, 10, 2, 2))
+    pi = np.zeros((10, 10, 2), dtype=int) # state -> action (hit/stick)
+    # Q = np.zeros((10, 10, 2, 2)) # (state (ps 10, dc 10, ua 2), action (hit/stick))
     Q = np.ones((10, 10, 2, 2)) * 100  # recommended: optimistic initialization of Q
     returns = np.zeros((10, 10, 2, 2))
     visits = np.zeros((10, 10, 2, 2))
-    maxiter = 100000000  # use whatever number of iterations you want
+    maxiter = 1000000  # use whatever number of iterations you want
     for i in tqdm(range(maxiter)):
+        # always first visit, since there are no cyclic states in a single blackjack game
+
+        G = 0
+        states, ret = single_run_pi(pi)
+        for state in states:
+            returns[state_to_index(state), pi[state_to_index(state)]] += ret
+            visits[state_to_index(state), pi[state_to_index(state)]] += 1
+        Q = np.divide(returns, visits, where=visits != 0)
+        pi = np.argmax(Q, axis=3)
+
+
         if i % 100000 == 0:
             print("Iteration: " + str(i))
             print(pi[:, :, 0])
             print(pi[:, :, 1])
 
+    # fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "3d"})
+    # player_sum = np.arange(12, 22)
+    # dealer_card = np.arange(1, 11)
+    # X, Y = np.meshgrid(player_sum, dealer_card)
+    # ax[0].plot_surface(X, Y, V[:, :, 0])
+    # ax[0].set_title("Usable Ace")
+    # ax[1].plot_surface(X, Y, V[:, :, 1])
+    # ax[1].set_title("No Usable Ace")
+    # plt.show()
+
 
 def main():
     # single_run_20()
-    policy_evaluation()
-    # monte_carlo_es()
+    # policy_evaluation()
+    monte_carlo_es()
 
 
 if __name__ == "__main__":
