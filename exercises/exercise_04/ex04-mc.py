@@ -39,8 +39,12 @@ def single_run_pi(pi):
     states = []
     ret = 0.
     while not done:
-        states.append(obs)
-        action = int(pi[state_to_index(obs)])
+
+        if obs[0] <= 11:
+            action = 1 # hit
+        else:
+            states.append(obs)
+            action = int(pi[state_to_index(obs)])
         obs, reward, done, _ = env.step(action)
         ret += reward
     return states, ret
@@ -55,7 +59,7 @@ def policy_evaluation():
     V = np.zeros((10, 10, 2))
     returns = np.zeros((10, 10, 2))
     visits = np.zeros((10, 10, 2))
-    maxiter = 100000  # use whatever number of iterations you want
+    maxiter = 1000000  # use whatever number of iterations you want
     for i in tqdm(range(maxiter)):
         # always first visit, since there are no cyclic states in a single blackjack game 
         G = 0
@@ -90,23 +94,32 @@ def monte_carlo_es():
     Q = np.ones((10, 10, 2, 2)) * 100  # recommended: optimistic initialization of Q
     returns = np.zeros((10, 10, 2, 2))
     visits = np.zeros((10, 10, 2, 2))
-    maxiter = 1000000  # use whatever number of iterations you want
+    maxiter = 10000000  # use whatever number of iterations you want
     for i in tqdm(range(maxiter)):
         # always first visit, since there are no cyclic states in a single blackjack game
+        # last reward is the only non-zero reward, therefore we do not have to take track of the rewards
 
-        G = 0
         states, ret = single_run_pi(pi)
         for state in states:
-            returns[state_to_index(state), pi[state_to_index(state)]] += ret
-            visits[state_to_index(state), pi[state_to_index(state)]] += 1
-        Q = np.divide(returns, visits, where=visits != 0)
-        pi = np.argmax(Q, axis=3)
+            idx = state_to_index(state)
+            idx_action = idx + (pi[idx],)
+            returns[idx_action] += ret
+            visits[idx_action] += 1
+            Q[idx_action] += returns[idx_action] / visits[idx_action]
+            # print(Q[idx])
+            # print(pi)
+            pi[idx] = np.argmax(Q[idx])
+            
 
 
         if i % 100000 == 0:
             print("Iteration: " + str(i))
             print(pi[:, :, 0])
             print(pi[:, :, 1])
+            # print(Q[:, :, 0, 0])
+            # print(Q[:, :, 1, 0])
+            # print(Q[:, :, 0, 1])
+            # print(Q[:, :, 1, 1])
 
     # fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "3d"})
     # player_sum = np.arange(12, 22)
