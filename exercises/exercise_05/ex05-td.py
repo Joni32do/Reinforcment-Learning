@@ -2,6 +2,7 @@ import gym
 import numpy as np
 from itertools import product
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 def print_policy(Q, env):
@@ -84,31 +85,48 @@ def plot_Q(Q, env):
     plt.xticks([])
     plt.yticks([])
 
+def epsilon_greedy(Q, s, epsilon):
+    """ Epsilon-greedy policy """
+    if np.random.rand() < epsilon:
+        return np.random.randint(Q.shape[1])
+    else:
+        return np.argmax(Q[s])
 
-def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e4)):
+
+def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e6)):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
 
-    # TODO: implement the sarsa algorithm
-
     # This is some starting point performing random walks in the environment:
-    for i in range(num_ep):
+    for i in tqdm(range(num_ep)):
         s = env.reset()
         done = False
         while not done:
-            a = np.random.randint(env.action_space.n)
+            a = epsilon_greedy(Q, s, epsilon)
             s_, r, done, _ = env.step(a)
+            a_ = epsilon_greedy(Q, s_, epsilon)
+            Q[s, a] = Q[s, a] + alpha * (r + gamma * Q[s_, a_] - Q[s, a])
+            s = s_
+            a = a_
     return Q
 
 
-def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e4)):
+def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e6)):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
-    # TODO: implement the qlearning algorithm
+    
+    for i in tqdm(range(num_ep)):
+        s = env.reset()
+        done = False
+        while not done:
+            a = epsilon_greedy(Q, s, epsilon)
+            s_, r, done, _ = env.step(a)
+            Q[s, a] = Q[s, a] + alpha * (r + gamma * np.max(Q[s_, :]) - Q[s, a])
+            s = s_
     return Q
 
 
 env = gym.make('FrozenLake-v0')
-# env=gym.make('FrozenLake-v0', is_slippery=False)
-# env=gym.make('FrozenLake-v0', map_name="8x8")
+env=gym.make('FrozenLake-v0', is_slippery=False)
+env=gym.make('FrozenLake-v0', map_name="8x8")
 
 print("current environment: ")
 env.render()
