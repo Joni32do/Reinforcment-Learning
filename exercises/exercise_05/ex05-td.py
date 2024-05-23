@@ -93,9 +93,9 @@ def epsilon_greedy(Q, s, epsilon):
         return np.argmax(Q[s])
 
 
-def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e6)):
+def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e5)):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
-
+    num = np.zeros(num_ep)
     # This is some starting point performing random walks in the environment:
     for i in tqdm(range(num_ep)):
         s = env.reset()
@@ -107,11 +107,21 @@ def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e6)):
             Q[s, a] = Q[s, a] + alpha * (r + gamma * Q[s_, a_] - Q[s, a])
             s = s_
             a = a_
+            num[i] += 1
+    # average over 1% of the episodes
+    frac = int(num_ep / 100)
+    num_avg = [np.mean(num[i:i + frac]) for i in range(0, num_ep, frac)]
+    plt.bar(range(len(num_avg)), num_avg)
+    plt.xlabel(f'Average of {frac} Episodes')
+    plt.ylabel('Steps')
+
+
     return Q
 
 
-def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e6)):
+def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e5)):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
+    num = np.zeros(num_ep)
     
     for i in tqdm(range(num_ep)):
         s = env.reset()
@@ -121,11 +131,20 @@ def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e6)):
             s_, r, done, _ = env.step(a)
             Q[s, a] = Q[s, a] + alpha * (r + gamma * np.max(Q[s_, :]) - Q[s, a])
             s = s_
+            num[i] += 1
+    
+    frac = int(num_ep / 100)
+    num_avg = [np.mean(num[i:i + frac]) for i in range(0, num_ep, frac)]
+    plt.bar(range(len(num_avg)), num_avg)
+    plt.xlabel(f'Average of {frac} Episodes')
+    plt.ylabel('Steps')
+
+
     return Q
 
 
 env = gym.make('FrozenLake-v0')
-env=gym.make('FrozenLake-v0', is_slippery=False)
+# env=gym.make('FrozenLake-v0', is_slippery=False)
 env=gym.make('FrozenLake-v0', map_name="8x8")
 
 print("current environment: ")
