@@ -23,11 +23,19 @@ In the Random walk example from lecture 5 slide 12 the value is a prediction of 
 \begin{equation}
     V(S_t) \leftarrow V(S_t) + \alpha \left[ R_{t+1} + \gamma V(S_{t+1}) - V(S_t) \right]
 \end{equation}
-When only the first state $V(A)$ is updated, the sampled Random walk is immediately terminated at the left. Then the equation abouve evaluates to
+
+The only changes in value (V( that can occur after the first episode are at the ends since they are the only sates where a reward is generated. In our case only $V(A)$ is updated, the sampled Random walk terminated at the left. Then the equation above evaluates to
 \begin{equation}
     V(A) \leftarrow V(A) + 0.1 \left[ 0 + 0 - V(A) \right] = V(A) - 0.1 V(A) = 0.5 - 0.1 \cdot 0.5 = 0.45
 \end{equation}
+
 Otherwise, also the state of another value would have been changed, e.g. if first the Random walk would have gone to the right, then $V(B)$ would have been updated as well.
+
+Eric: 
+The actions leading to the first reward cannot be traced back as the updates bring no changes due to the uniform initialisation of the values.
+\begin{equation}
+    V(B) \leftarrow V(B) + 0.1 \left[ 0 + V(A) - V(B) \right] = V(B) - 0.1 [0.5 -0.5] = 0.5
+\end{equation}
 
 \section*{Task 2) - Sarsa and Q-learning on the Frozen Lake}
 
