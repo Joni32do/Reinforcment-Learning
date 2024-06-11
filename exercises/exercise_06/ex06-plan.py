@@ -32,7 +32,7 @@ def mcts(env, root, maxiter=500, eps = 0.5):
     # this is an example of how to add nodes to the root for all possible actions:
     root.children = [Node(root, a) for a in range(env.action_space.n)]
 
-    for i in tqdm(range(maxiter)):
+    for i in range(maxiter):
         state = copy.deepcopy(env)
         G = 0.
         visits_episode = [root]
@@ -76,24 +76,30 @@ def main():
     env = gym.make("Taxi-v3")
     env.seed(0)  # use seed to make results better comparable
     # run the algorithm 10 times:
-    rewards = []
-    for i in range(10):
-        env.reset()
-        terminal = False
-        root = Node()  # Initialize empty tree
-        sum_reward = 0.
-        while not terminal:
-            env.render()
-            mcts(env, root)  # expand tree from root node using mcts
-            values = [c.sum_value/c.visits for c in root.children]  # calculate values for child actions
-            bestchild = root.children[np.argmax(values)]  # select the best child
-            _, reward, terminal, _ = env.step(bestchild.action) # perform action for child
-            root = bestchild  # use the best child as next root
-            root.parent = None
-            sum_reward += reward
-        rewards.append(sum_reward)
-        print("finished run " + str(i+1) + " with reward: " + str(sum_reward))
-    print("mean reward: ", np.mean(rewards))
+    mean_rewards = []
+    for n_episodes in [10, 20, 50, 100, 200, 500]:
+        rewards = []
+        for i in range(3):
+            env.reset()
+            terminal = False
+            root = Node()  # Initialize empty tree
+            sum_reward = 0.
+            rewards = []
+            while not terminal:
+                # env.render()
+                mcts(env, root, maxiter=n_episodes)  # expand tree from root node using mcts
+                values = [c.sum_value/c.visits if c.visits > 0 else 0 for c in root.children]  # calculate values for child actions
+                bestchild = root.children[np.argmax(values)]  # select the best child
+                _, reward, terminal, _ = env.step(bestchild.action) # perform action for child
+                root = bestchild  # use the best child as next root
+                root.parent = None
+                sum_reward += reward
+            rewards.append(sum_reward)
+            print("finished run " + str(i+1) + " with reward: " + str(sum_reward))
+        print("mean reward: ", np.mean(rewards))
+        mean_rewards.append(np.mean(rewards))
+    print(mean_rewards)
+
 
 if __name__ == "__main__":
     main()
@@ -103,7 +109,7 @@ if __name__ == "__main__":
 Tasks:
 a)
 * Mean return -> plot
-* Avg. reward MCTS -> better then plain code template (without tree only MCS)
+* Avg.reward MCTS -> better then plain code template (without tree only MCS)
 
 b)
 * How does the tree evolve -> length of tree: longest path/n_it
