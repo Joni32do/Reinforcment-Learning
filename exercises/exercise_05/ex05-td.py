@@ -88,7 +88,7 @@ def plot_Q(Q, env):
 def epsilon_greedy(Q, s, epsilon):
     """ Epsilon-greedy policy """
     if np.random.rand() < epsilon:
-        return np.random.randint(Q.shape[1])
+        return np.random.randint(env.action_space.n)
     else:
         return np.argmax(Q[s])
 
@@ -119,7 +119,7 @@ def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e5)):
     return Q
 
 
-def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.5, num_ep=int(1e5)):
+def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e5)):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
     num = np.zeros(num_ep)
     
