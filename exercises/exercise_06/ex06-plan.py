@@ -2,6 +2,7 @@ import gym
 import copy
 import random
 import numpy as np
+from tqdm import tqdm
 
 class Node:
     def __init__(self, parent=None, action=None):
@@ -24,33 +25,49 @@ def rollout(env, maxsteps=100):
     return G
 
 
-def mcts(env, root, maxiter=500):
+def mcts(env, root, maxiter=500, eps = 0.5):
     """ TODO: Use this function as a starting point for implementing Monte Carlo Tree Search
     """
 
     # this is an example of how to add nodes to the root for all possible actions:
     root.children = [Node(root, a) for a in range(env.action_space.n)]
 
-    for i in range(maxiter):
+    for i in tqdm(range(maxiter)):
         state = copy.deepcopy(env)
         G = 0.
+        visits_episode = [root]
+        
+        node = root
+        while node.children:
+            values = [c.sum_value/c.visits if c.visits > 0 else 0 for c in node.children] # TODO: Vectorize with np
+            bestchild = node.children[np.argmax(values)]
+            # epsilon greedy
+            if random.random() < eps:
+                node = random.choice(node.children)
+            else:
+                node = bestchild
 
-        # TODO: traverse the tree using an epsilon greedy tree policy
-        # This is an example howto randomly choose a node and perform the action:
-        node = random.choice(root.children)
-        _, reward, terminal, _ = state.step(node.action)
+            visits_episode.append(node)
+
+        # Now the current node is a leaf node
+        leaf_node = node
+        # Fill it with all possible actions
+        leaf_node.children = [Node(leaf_node, a) for a in range(env.action_space.n)]
+
+        child_node = random.choice(leaf_node.children)
+        _, reward, terminal, _ = state.step(child_node.action)
+        visits_episode.append(child_node)
+
         G += reward
-
-        # TODO: Expansion of tree
-
         # This performs a rollout (Simulation):
         if not terminal:
             G += rollout(state)
 
         # TODO: update all visited nodes in the tree
         # This updates values for the current node:
-        node.visits += 1
-        node.sum_value += G
+        for node in visits_episode:
+            node.visits += 1
+            node.sum_value += G
 
 
 
@@ -80,3 +97,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+'''
+Tasks:
+a)
+* Mean return -> plot
+* Avg. reward MCTS -> better then plain code template (without tree only MCS)
+
+b)
+* How does the tree evolve -> length of tree: longest path/n_it
+'''
