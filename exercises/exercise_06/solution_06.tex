@@ -23,7 +23,7 @@ Eric Choquet - st160996}
 
 \paragraph*{a) Why did Dyna-Q+ perform better in both test phase}
 
-Lets start with the \textbf{second phase}. For the phase of the suddenly appearing shortcut in the beginning of the wall, Dyna-Q+ is able to exploit the gained benefit, since it explores the possibilities to go there. On the other hand Dyna-Q remains on its fixed strategy which proofed to perform better (i.e. the hole on the left of the wall) and therefore remains slow. \\
+Lets start with the \textbf{second phase}. For the phase of the suddenly appearing shortcut in the beginning of the wall, Dyna-Q+ is able to exploit the gained benefit faster, since it generates a higher reward since the state was not visited for a long time. On the other hand Dyna-Q remains on its fixed strategy which proofed to perform better for a longer period of time(i.e. the hole on the left of the wall) and therefore remains slow. \\
 
 Lets consider the \textbf{first phase} and the tricky question: Why doesn't it cost Dyna-Q+ to explore its environment? This can be explained by living in a grid universe and one can not exploit walking diagonal. Therefore, each path to the hole in the wall is of the same length. Dyna-Q+ performs initially better, since it tends to explore the terrain and finds the hole in the wall earlier.
 
