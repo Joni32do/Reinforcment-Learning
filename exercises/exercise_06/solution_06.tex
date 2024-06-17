@@ -48,13 +48,45 @@ Does this still perform well on changing environments? - If not how could it? Th
 
 \section{Monte Carlo Tree Search on the Taxi environment}
 
+\paragraph{a) Performance of the MCTS algorithm}
+
+In the accompanying scrupt \texttt{ex06\_plan.py} a monte carlo tree approach is implemented. As a test, the Taxi environment is used. It consist out of a yellow cab and four zones where the cab can pick up and drop off passengers. The cab can move in four directions (up, down, left, right) and can pick up and drop off passengers. The goal is to pick up a passenger at a certain location and drop him off at another location. The reward is given by the distance driven and the number of steps taken. The algorithm is tested with different values for the number of iterations \texttt{maxiter} and repeated three times for stability. The results are shown in figure \ref{fig:terminal}. 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{images/terminal.png}
 \caption{Output for Trees with \texttt{maxiter} = [10, 20, 50, 100, 200, 500]}
 \label{fig:terminal}
 \end{figure}
-TODO:
+Another way to display this is via an table
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c|c|c}
+\texttt{maxiter} & 1st Run & 2nd run & 3rd run & average  \\  \hline
+ 10& -605 &  -632 & -615 & -617 \\  \hline 
+ 20& -848 & -812 & -821 & -827  \\ \hline
+ 50& -839 & -320 & -767 & -642  \\ \hline
+ 100&-830& -666 & -704 & -733  \\ \hline
+ 200&-731&-839&-812&-794  \\ \hline
+ 500& -794&-767&-839 & -800
+\end{tabular}
+\caption{Tabular Version of terminal output}
+\label{tab:t1}
+\end{table}
+
+
+
+
+% [7, 7, 6, 7, 6, 7, 7, 7, 6, 7, 7, 7, 6, 6, 7, 7, 7, 7, 7, 7, 7, 8, 7, 5, 7, 7, 6, 7, 7, 8, 7, 6, 7, 7, 7, 6, 7, 7, 7, 7, 7, 7, 6, 7, 6, 7, 7, 6, 8, 7, 6, 7, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 7, 7, 7, 6, 7, 7, 6, 6, 7, 8, 6, 7, 7, 7, 6, 6, 7, 6, 8, 7, 8, 8, 6, 6, 7, 7, 8, 7, 7, 5, 6, 8, 7, 7, 7, 6, 7, 8, 7, 7, 7, 6, 6, 7, 7, 7, 7, 7, 6, 7, 7, 8, 7, 7, 7, 6, 7, 7, 7, 7, 6, 7, 7, 7, 7, 7, 7, 6, 7, 6, 7, 7, 7, 6, 6, 7, 7, 7, 8, 7, 7, 6, 7, 7, 7, 7, 7, 7, 8, 7, 7, 6, 7, 7, 8, 7, 7, 7, 7, 7, 7, 7, 7, 8, 6, 7, 7, 7, 6, 6, 7, 7, 6, 8, 6, 7, 7, 6, 7, 7, 6, 7, 7, 7, 7, 7, 7, 6, 7, 7, 7, 6, 7, 7, 7, 6]
+
+\paragraph*{b) Depth evaluation of trees}
+
+To our surprise the tree doesn't seem to grow with the number of iterations. It stays roughly stable at a depth of 7. This is shown in figure \ref{fig:tree}. This is a bit surprising, since one would expect the tree to grow with the number of iterations. 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/depth_evolution.png}
+\caption{depth evaluation for Trees with \texttt{maxiter} = 500}
+\label{fig:tree}
+\end{figure}
 
 \end{document}
 

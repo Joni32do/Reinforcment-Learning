@@ -3,6 +3,7 @@ import copy
 import random
 import numpy as np
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 class Node:
     def __init__(self, parent=None, action=None):
@@ -70,14 +71,22 @@ def mcts(env, root, maxiter=500, eps = 0.5):
             node.sum_value += G
 
 
-
+def get_depth(node):
+    '''Get the depth of a node in the tree'''
+    if not node.children:
+        return 1
+    else:
+        return 1 + max([get_depth(child) for child in node.children])
+    
 
 def main():
     env = gym.make("Taxi-v3")
     env.seed(0)  # use seed to make results better comparable
     # run the algorithm 10 times:
     mean_rewards = []
-    for n_episodes in [10, 20, 50, 100, 200, 500]:
+    mean_depth = []
+    for n_episodes in [500]: #10, 20, 50, 100, 200, 
+        depths = []
         rewards = []
         for i in range(3):
             env.reset()
@@ -85,8 +94,9 @@ def main():
             root = Node()  # Initialize empty tree
             sum_reward = 0.
             rewards = []
+            depth_evolution = []
             while not terminal:
-                # env.render()
+                env.render()
                 mcts(env, root, maxiter=n_episodes)  # expand tree from root node using mcts
                 values = [c.sum_value/c.visits if c.visits > 0 else 0 for c in root.children]  # calculate values for child actions
                 bestchild = root.children[np.argmax(values)]  # select the best child
@@ -94,10 +104,16 @@ def main():
                 root = bestchild  # use the best child as next root
                 root.parent = None
                 sum_reward += reward
+                depth_evolution.append(get_depth(root))
+            print(depth_evolution)
+            # plt.plot(depth_evolution)
+            # plt.show(block=False)
+            depths.append(get_depth(root))
             rewards.append(sum_reward)
             print("finished run " + str(i+1) + " with reward: " + str(sum_reward))
         print("mean reward: ", np.mean(rewards))
         mean_rewards.append(np.mean(rewards))
+        mean_depth.append(np.mean(depths))
     print(mean_rewards)
 
 
