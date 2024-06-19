@@ -19,8 +19,8 @@ def random_episode(env):
 
 def discret(s):
     coordinate = [0,0]
-    coordinate[0] = 0 #int(round(20*(s[0]+1.2)/1.8))
-    coordinate[1] = 0 #int(round(20*(s[1]+0.07)/0.14))
+    coordinate[0] = int(round(19*(s[0]+1.2)/1.8))
+    coordinate[1] = int(round(19*(s[1]+0.07)/0.14))
     return coordinate
 
 
@@ -84,7 +84,7 @@ def episode(env, w, eps, alpha, gamma):
 
 def q_learning(episodes,eps, alpha, gamma):
     env = gym.make('MountainCar-v0')
-    aggregate = 1
+    aggregate = 20
     #w = np.random.rand(aggregate, aggregate, 3) * 0.01  # Small random values
     w = np.zeros([aggregate,aggregate,3])
 
@@ -94,15 +94,17 @@ def q_learning(episodes,eps, alpha, gamma):
         #print(f"Episode {i+1} complete")
         #print("Reward=", reward)
         #print("W",w)
+
         episode_reward += reward
     env.close()
-    print("W",w)
+    #print("W",w)
+
     return episode_reward
 
 
 def main():
     total = 0
-    total = q_learning(1000, 0.5, 0.05, 0.99)
+    total = q_learning(20, 0.5, 0.05, 0.95)
     print("total" , total)
 
 
