@@ -17,9 +17,21 @@ def random_episode(env):
             break
 
 
+def discret(s):
+    coordinate = [0,0]
+    coordinate[0] = 0 #int(round(20*(s[0]+1.2)/1.8))
+    coordinate[1] = 0 #int(round(20*(s[1]+0.07)/0.14))
+    return coordinate
+
+
+def weights(s,w):
+    coordinate = discret(s)
+    factors = w[coordinate[0], coordinate[1], :]
+    return factors
+
 def q_value(s, a, w):
     x = np.append(s, a)
-    q_calc = np.dot(w, x)
+    q_calc = np.dot(weights(s,w), x)
     return q_calc
 
 
@@ -56,12 +68,12 @@ def episode(env, w, eps, alpha, gamma):
 
         max_action = best_action(obs, w)
         q_current = q_value(obs, act, w)
-        q_next = q_value(obs_next, max_action ,w)
+        q_next = q_value(obs_next, max_action, w)
 
         error = reward + gamma * q_next - q_current
 
         x = np.append(obs, act)
-        w = w + alpha * error * x
+        w[discret(obs)] = w[discret(obs)] + alpha * error * x
 
         obs = obs_next
 
@@ -72,22 +84,27 @@ def episode(env, w, eps, alpha, gamma):
 
 def q_learning(episodes,eps, alpha, gamma):
     env = gym.make('MountainCar-v0')
-    #w = np.zeros([3])
-    w = np.zeros(env.observation_space.shape[0] + 1)
+    aggregate = 1
+    #w = np.random.rand(aggregate, aggregate, 3) * 0.01  # Small random values
+    w = np.zeros([aggregate,aggregate,3])
+
     episode_reward = 0
     for i in range(episodes):
-        w, reward = episode(env,w, eps,alpha, gamma)
+        w, reward = episode(env, w, eps, alpha, gamma)
         #print(f"Episode {i+1} complete")
         #print("Reward=", reward)
         #print("W",w)
         episode_reward += reward
     env.close()
+    print("W",w)
     return episode_reward
+
 
 def main():
     total = 0
-    total = q_learning(20, 0.3, 0.05, 0.9)
+    total = q_learning(1000, 0.5, 0.05, 0.99)
     print("total" , total)
+
 
 if __name__ == "__main__":
     main()
