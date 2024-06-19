@@ -16,62 +16,78 @@ def random_episode(env):
         if done:
             break
 
-def action(observation, w):
-    action_to_take = 1 if np.dot(observation, w) >1 else -1
-    return action_to_take
 
-def q(s, a, w):
-    x = np.append(s,a)
-    q_value = np.dot(w, x)
-    return q_value
+def q_value(s, a, w):
+    x = np.append(s, a)
+    q_calc = np.dot(w, x)
+    return q_calc
+
 
 def best_action(s, w):
-    best = -10
-    result = -10
-    actions = [-1, 0, 1]   #best if taken from environment
+    best = None
+    result = -float('inf')
+    actions = [0, 1, 2]   #best if taken from environment
     for action in actions:
-        best = action if q(s, action, w)>result else best
-    return best
+        q_val = q_value(s, action, w)
+        if q_val > result:
+            best = action
+            result = q_val
+    return int(best)
 
-def episode(env, w, eps = 0.2, alpha = 0.1, gamma = 0.1):
-    obs, reward, done, info = env.step(0)
-    obs_old = obs
+
+def episode(env, w, eps , alpha , gamma ):
+    obs = env.reset()
+    total_reward = 0
     q = 0
     while True:
-        env.render()
+        #env.render()
 
-        action = best_action(obs, w) if np.random.random() > eps else env.action_space.sample() #epsilon greedy
-        print("do action: ", action)
+        if np.random.random() > eps:
+            act = best_action(obs, w)
+        else:
+            act = env.action_space.sample() #epsilon greedy
 
-        obs, reward, done, info = env.step(action)
-        print("observation: ", obs)
-        print("reward: ", reward)
+        #print("do action: ", act)
+
+        obs_next, reward, done, info = env.step(act)
+        #print("observation: ", obs)
+        #print("reward: ", reward)
+        total_reward += reward
 
         max_action = best_action(obs, w)
-        q = q(obs_old, action, w) + alpha .* [reward + gamma * q(obs, max_action, w) - q(obs_old, action, w)] #calculate q
+        q_current = q_value(obs, act, w)
+        q_next = q_value(obs_next, max_action ,w)
 
-        w = w + alpha*(q - q(obs_old, action, w)) * w
+        error = reward + gamma * q_next - q_current
 
-        obs_old = obs
+        x = np.append(obs, act)
+        w = w + alpha * error * x
 
-        print("")
+        obs = obs_next
+
+        #print("")
         if done:
             break
-    return w
+    return w, total_reward
 
-def q_learning(episodes):
+def q_learning(episodes,eps, alpha, gamma):
     env = gym.make('MountainCar-v0')
-    env.reset()
-    w = np.zeros([3])
-
+    #w = np.zeros([3])
+    w = np.zeros(env.observation_space.shape[0] + 1)
+    episode_reward = 0
     for i in range(episodes):
-        env.reset()
-        w = episode(env,w)
-        env.close()
-
+        w, reward = episode(env,w, eps,alpha, gamma)
+        #print(f"Episode {i+1} complete")
+        #print("Reward=", reward)
+        #print("W",w)
+        episode_reward += reward
+    env.close()
+    return episode_reward
 
 def main():
-    q_learning(10)
+    total = 0
+    total = q_learning(20, 0.3, 0.05, 0.9)
+    print("total" , total)
 
 if __name__ == "__main__":
     main()
