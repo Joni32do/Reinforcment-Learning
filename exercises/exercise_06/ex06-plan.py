@@ -38,6 +38,7 @@ def mcts(env, root, maxiter=500, eps = 0.5):
         G = 0.
         visits_episode = [root]
         
+        # Selection - Expansion - Backpropogation
         node = root
         while node.children:
             values = [c.sum_value/c.visits if c.visits > 0 else 0 for c in node.children] # TODO: Vectorize with np
@@ -88,7 +89,7 @@ def main():
     for n_episodes in [500]: #10, 20, 50, 100, 200, 
         depths = []
         rewards = []
-        for i in range(3):
+        for i in range(10):
             env.reset()
             terminal = False
             root = Node()  # Initialize empty tree
