@@ -24,12 +24,19 @@ Eric Choquet - st160996}
 
 \paragraph*{a)  Tabular linear function approximation}
 
-TODO
-
+$$\hat{v}(s,w) = \sum_{i=1}^d w_i f(x_i)$$
+With $f(x_i)$ being a piecewise constant function equal to 1 for $0<x<1$.
 
 \paragraph*{b) Update rule for Sarsa}
 
-TODO
+\begin{enumerate}
+\item Tabular case\\
+$$\sum_{i=q}^d w_i f(s_{t+1}) = \sum_{i=q}^d w_i f(s_t) +\alpha [R_{t+1} + \gamma (\sum_{i=q}^d w_i f(s_{t+1})) - \sum_{i=q}^d w_i f(s_t)]$$
+\item Function approximation\\
+$$\sum_{i=q}^d w_i x_i(s_t) = \sum_{i=q}^d w_i x_i(s_t) +\alpha [R_{t+1} + \gamma (\sum_{i=q}^d w_i x_i(s_{t+1})) - \sum_{i=q}^d w_i x_i(s_t)]$$
+\item Linear function approximation\\
+
+\end{enumerate}
 
 
 
