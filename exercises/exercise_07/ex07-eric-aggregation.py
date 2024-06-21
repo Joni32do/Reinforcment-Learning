@@ -104,9 +104,33 @@ def q_learning(episodes,eps, alpha, gamma):
 
 def main():
     total = 0
-    total = q_learning(20, 0.5, 0.05, 0.95)
+    total = q_learning(10000, 0.5, 0.05, 0.95)
     print("total" , total)
 
 
 if __name__ == "__main__":
     main()
+
+'''
+
+    n_bins = weights.shape[0]
+    x = np.linspace(-1.2, 0.6, n_bins)
+    y = np.linspace(-0.07, 0.07, n_bins)
+    X, Y = np.meshgrid(x, y)
+    Z = np.zeros_like(X)
+
+    for i in range(n_bins):
+        for j in range(n_bins):
+            state = np.array([X[i, j], Y[i, j]])
+            Z[i, j] = np.max(weights[discretize(state)])
+
+    fig = plt.figure(figsize=(10, 6))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(X, Y, Z, cmap='viridis')
+    ax.set_xlabel('Position')
+    ax.set_ylabel('Velocity')
+    ax.set_zlabel('Max Q-value')
+    ax.set_title('Max Q-values over Discretized State Space')
+    plt.show()
+
+   '''
