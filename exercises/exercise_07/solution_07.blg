@@ -1,5 +1,0 @@
-[0] Config.pm:311> INFO - This is Biber 2.16
-[1] Config.pm:314> INFO - Logfile is 'solution_07.blg'
-[261] biber-MSWIN64:340> INFO - === 
-[1118] Utils.pm:411> ERROR - Cannot find 'solution_07.bcf'!
-[1119] Biber.pm:132> INFO - ERRORS: 1
