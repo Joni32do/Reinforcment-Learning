@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{bbm}
+\usepackage{multirow}
+\usepackage{comment}
+
+\newcommand{\wb}{\mathbf{w}}
+\newcommand{\xb}{\mathbf{x}}
+
+\title{Reinforcement Learning \\ Exercise 8 - Solution}
+\author{Jonathan Schnitzler - st166934 \\
+Eric Choquet - st160996}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section{n-step TD compared to planing}
+
+The difference of the n-step temporal difference to the Dyna-Q planning, is that only the reward of the path which was taken can be accounted for. Therefore, unlike the image it is not possible after one episode to have a policy for all tiles, but instead only for the taken path. In contrast, Dyna-Q planning revisits arbitrary a virtual tile, which allows a richer interpretation.
+
+
+
+
+\end{document}
+
