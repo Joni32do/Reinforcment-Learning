@@ -93,7 +93,7 @@ def epsilon_greedy(Q, s, epsilon):
         return np.argmax(Q[s])
 
 
-def sarsa(env, alpha=0.025, gamma=0.9, epsilon=0.5, num_ep=int(2.5e5), n_step: int = 4):
+def sarsa(env, alpha=0.025, gamma=0.9, epsilon=0.5, num_ep=int(2.5e5), n_step: int = 20):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
     steps_per_episode = np.zeros(num_ep)
     for i in tqdm(range(num_ep)):
@@ -132,12 +132,12 @@ def sarsa(env, alpha=0.025, gamma=0.9, epsilon=0.5, num_ep=int(2.5e5), n_step: i
 
     # plot - average over 1% of the episodes
     frac = int(num_ep / 100)
-    num_avg = [np.mean(steps_per_episode[i:i + frac]) for i in range(0, num_ep, frac)]
-    plt.bar(range(len(num_avg)), num_avg)
+    average_steps = [np.mean(steps_per_episode[i:i + frac]) for i in range(0, num_ep, frac)]
+    plt.bar(range(len(average_steps)), average_steps)
     plt.xlabel(f'Average of {frac} Episodes')
     plt.ylabel('Steps')
 
-    return Q
+    return Q, average_steps
 
 
 if __name__ == "__main__":
@@ -148,6 +148,7 @@ if __name__ == "__main__":
     print()
 
     print("Running sarsa...")
+
     Q = sarsa(env)
     plot_V(Q, env)
     plot_Q(Q, env)
