@@ -25,10 +25,44 @@ Eric Choquet - st160996}
 
 \section{n-step TD compared to planing}
 
+\paragraph*{a) Improve TD(0) with n-step TD}
 The difference of the n-step temporal difference to the Dyna-Q planning, is that only the reward of the path which was taken can be accounted for. Therefore, unlike the image it is not possible after one episode to have a policy for all tiles, but instead only for the taken path. In contrast, Dyna-Q planning revisits arbitrary a virtual tile, which allows a richer interpretation.
 
+\paragraph*{b) Recursive lambda-return}
 
+The $\lambda$-return is defined as
+\begin{equation}
+    G_{t}^{\lambda} = (1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}G_{t:t+n}
+\end{equation}
+with
+\begin{equation}
+    G_{t:t+n} = R_{t+1} + \gamma R_{t+2} + \ldots + \gamma^{n-1}R_{t+n} + \gamma^{n}V(S_{t+n})
+\end{equation}
+To define it recursively, we want to reframe the problem involving $G_t^{\lambda}$
+\begin{equation}
+    G_{t+1}^{\lambda} = (1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}G_{t+1:t+n+1}
+\end{equation}
+Here we can note that
+\begin{equation}
+    G_{t+1:t+n+1} = R_{t+2} + \gamma R_{t+3} + \ldots + \gamma^{n-1}R_{t+n+1} + \gamma^{n}V(S_{t+n+1})
+\end{equation}
+We can rewrite $G_{t+1:t+n+1}$ as
+\begin{equation}
+    G_{t+1:t+n+1} = \frac{1}{\gamma}\left(G_{t:t+n} - R_{t+1} + \gamma^{n} R_{t+n+1} -\gamma^n V(S_{t+n})\right)+ \gamma^{n}V(S_{t+n+1})
+\end{equation}
 
+Then we can rewrite the $\lambda$-return as
+
+\begin{align*}
+    G_{t+1}^{\lambda} &= (1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1} \left[ \frac{1}{\gamma}\left(G_{t:t+n} - R_{t+1} + \gamma^{n} R_{t+n+1} -\gamma^n V(S_{t+n})\right) + \gamma^{n}V(S_{t+n+1}) \right] \\
+    G_{t+1}^{\lambda} &= \frac{1}{\gamma}(1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}G_{t:t+n}
+    \\ &+ (1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1} \left[ \frac{1}{\gamma}\left(- R_{t+1} + \gamma^{n} R_{t+n+1} -\gamma^n V(S_{t+n})\right) + \gamma^{n}V(S_{t+n+1}) \right] \\
+    G_{t+1}^{\lambda} &= \frac{1}{\gamma} G_t^{\lambda}+ (1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1} \left[ -\frac{R_{t+1}}{\gamma} + \gamma^{n-1} R_{t+n+1} -\gamma^{n-1} V(S_{t+n}) + \gamma^{n}V(S_{t+n+1}) \right]
+\end{align*}
+
+Could be extended further, but this should be sufficient for today.
+
+% https://ai.stackexchange.com/questions/11783/how-can-the-lambda-return-be-defined-recursively is different
 
 \end{document}
 

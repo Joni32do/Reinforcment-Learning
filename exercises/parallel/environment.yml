@@ -1,0 +1,20 @@
+name: parallel_env
+channels:
+  - defaults
+  - conda-forge
+  - anaconda
+dependencies:
+  - python=3.9
+  - numpy
+  - scipy
+  - numba
+  - cupy
+  - dask
+  - distributed
+  - joblib
+  - cython
+  - pytorch
+  - torchvision
+  - torchaudio
+  - cudatoolkit=11.0
+  - tensorflow-gpu

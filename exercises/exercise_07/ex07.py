@@ -181,7 +181,7 @@ def main():
     n_episodes = 100000
 
     for i in range(1):
-        total, n_successes, steps_per_episode = q_learning(n_episodes, 0.3, 0.05, 0.9)
+        total, n_successes, steps_per_episode = q_learning(n_episodes, 0.1, 0.05, 0.9)
         total_rewards.append(total)
         total_successes.append(n_successes)
         total_steps.append(steps_per_episode)

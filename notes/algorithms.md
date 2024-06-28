@@ -13,3 +13,5 @@
 ![1717676191802](image/algorithms/1717676191802.png)
 
 ![1717676229813](image/algorithms/1717676229813.png)
+
+<img src="image/algorithms/REINFORCE.png" width="75%">
