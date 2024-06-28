@@ -26,7 +26,14 @@ Eric Choquet - st160996}
 \section{n-step TD compared to planing}
 
 \paragraph*{a) Improve TD(0) with n-step TD}
-The difference of the n-step temporal difference to the Dyna-Q planning, is that only the reward of the path which was taken can be accounted for. Therefore, unlike the image it is not possible after one episode to have a policy for all tiles, but instead only for the taken path. In contrast, Dyna-Q planning revisits arbitrary a virtual tile, which allows a richer interpretation.
+The difference of the n-step temporal difference to the Dyna-Q planning, is that only the reward of the path which was taken can be accounted for. Therefore, unlike the image it is not possible after one episode to have a policy for all tiles, but instead only for the taken path. In contrast, Dyna-Q planning revisits arbitrary a virtual tile, which allows a richer interpretation. A visual interpretation is depicted in Figure \ref{fig:1a}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{nstep.png}
+\caption{The red arrows indicate 4-step TD, while the black arrows just continue for an arbitrary n, where the sampled episode is also arbitrary}
+\label{fig:a1}
+\end{figure}
 
 \paragraph*{b) Recursive lambda-return}
 
@@ -64,5 +71,63 @@ Could be extended further, but this should be sufficient for today.
 
 % https://ai.stackexchange.com/questions/11783/how-can-the-lambda-return-be-defined-recursively is different
 
-\end{document}
+\section{n-step Sarsa on the Frozen Lake}
 
+The implemented algorithm in python with the Gym FrozenLake Environment can be found attached to this file. The 8x8 map is the following
+\begin{table}[H]
+\centering
+\begin{tabular}{ccccccccc}
+S&F&F&F&F&F&F&F\\
+F&F&F&F&F&F&F&F\\
+F&F&F&H&F&F&F&F\\
+F&F&F&F&F&H&F&F\\
+F&F&F&H&F&F&F&F\\
+F&H&H&F&F&F&H&F\\
+F&H&F&F&H&F&H&F\\
+F&F&F&H&F&F&F&G
+\end{tabular}
+\caption{Where F is frozen, H is hole, S is start and G is goal}
+\label{tab:map}
+\end{table}
+
+The value function after 250000 episodes with $\alpha = 0.025$ and $\epsilon = 0.1$ is depicted in Figure \ref{fig:V} and the state-action value function in Figure \ref{fig:Q}. The policy is given in Table \ref{tab:policy}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/V.png}
+\caption{Value function after 250000 episodes}      
+\label{fig:V}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/Q.png}
+\caption{State-Action value function after 250000 episodes}
+\label{fig:Q}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/avg_episode_length.png}
+\caption{Average episode length through the training process}
+\label{fig:avg}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ccccccccc}
+        →& ↓& →& ↓& →& →& →& → \\
+        ↑& ↑& →& ↑& →& →& →& → \\
+        ←& →& ↑& H& →& ↑& ←& ↓ \\
+        ↑& ↑& →& →& ←& H& ↑& ↓ \\
+        ↑& ↑& ←& H& ↓& →& ↑& ↓ \\
+        ←& H& H& ↑& ↓& →& H& ↓ \\
+        ←& H& →& ←& H& →& H& ↓ \\
+        ↑& ↓& ←& H& ↑& →& →& G 
+    \end{tabular}
+\caption{Where the arrow indicates the walking direction}
+\label{tab:policy}
+\end{table}
+
+
+\end{document}
