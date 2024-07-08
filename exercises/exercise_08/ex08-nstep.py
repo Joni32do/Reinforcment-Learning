@@ -93,9 +93,10 @@ def epsilon_greedy(Q, s, epsilon):
         return np.argmax(Q[s])
 
 
-def sarsa(env, alpha=0.025, gamma=0.9, epsilon=0.5, num_ep=int(2.5e5), n_step: int = 20):
+def n_step_sarsa(env, alpha=0.025, gamma=0.9, epsilon=0.5, num_ep=int(2.5e5), n_step: int = 5):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
     steps_per_episode = np.zeros(num_ep)
+    successful_episode = np.zeros(num_ep)
     for i in tqdm(range(num_ep)):
         # init episode
         done = False
@@ -129,30 +130,53 @@ def sarsa(env, alpha=0.025, gamma=0.9, epsilon=0.5, num_ep=int(2.5e5), n_step: i
 
             t += 1
             steps_per_episode[i] += 1
-
+        if rewards[-1] == 1:
+            successful_episode[i] = 1
+        
     # plot - average over 1% of the episodes
     frac = int(num_ep / 100)
     average_steps = [np.mean(steps_per_episode[i:i + frac]) for i in range(0, num_ep, frac)]
-    plt.bar(range(len(average_steps)), average_steps)
-    plt.xlabel(f'Average of {frac} Episodes')
-    plt.ylabel('Steps')
+    average_success = [np.mean(successful_episode[i:i + frac]) for i in range(0, num_ep, frac)]
+    
+    return Q, average_steps, average_success
 
-    return Q, average_steps
 
+def visualize_performance(collection_of_average_steps, collection_of_average_success, labels):
+    fig, axs = plt.subplots(2, 1, figsize=(12, 6))
+    # colormap
+    cmap = plt.get_cmap('tab10')
+    for average_steps, average_success, label, i in zip(collection_of_average_steps, collection_of_average_success, labels, range(len(labels))):
+        axs[0].plot(range(len(average_steps)), average_steps, label=label, color=cmap(i))
+        axs[1].plot(range(len(average_success)), average_success, label=label, color=cmap(i))
+    axs[0].set_ylabel('Average Steps per Episode')
+    axs[1].set_ylabel('Average Success per Episode')
+    for ax in axs:
+        ax.set_xlabel('Averaged Episodes')
+        ax.legend()
+
+    fig.savefig("images/performance_2.png")
 
 if __name__ == "__main__":
 
     env = gym.make('FrozenLake-v0', map_name="8x8")
     print("current environment: ")
     env.render()
-    print()
+    alphas = [0.01, 0.025, 0.05, 0.1, 0.25, 0.5]
+    n_step = [1, 2, 5, 10, 15, 20, 50]
+    alpha_labels = [f'alpha={alpha}' for alpha in alphas]
+    collection_of_average_steps = []
+    collection_of_average_success = []
+    for alpha in alphas:
+        Q, average_steps, average_success = n_step_sarsa(env, alpha=alpha, num_ep=int(1e5))
+        collection_of_average_steps.append(average_steps)
+        collection_of_average_success.append(average_success)
+    visualize_performance(collection_of_average_steps, collection_of_average_success, alpha_labels)
+    
 
-    print("Running sarsa...")
 
-    Q = sarsa(env)
-    plot_V(Q, env)
-    plot_Q(Q, env)
-    print_policy(Q, env)
-    plt.show()
+
+    # plot_V(Q, env)
+    # plot_Q(Q, env)
+    # print_policy(Q, env)
     # # TODO: run multiple times, evaluate the performance for different n and alpha
     # nstep_sarsa(env)

@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{bbm}
+\usepackage{multirow}
+\usepackage{comment}
+
+\newcommand{\wb}{\mathbf{w}}
+\newcommand{\xb}{\mathbf{x}}
+
+\title{Reinforcement Learning \\ Exercise 9 - Solution}
+\author{Jonathan Schnitzler - st166934 \\
+Eric Choquet - st160996}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section*{REINFORCE on the Cart-Pole}
+
+\paragraph*{a) Linear features}
+
+Equation for $\pi(a|s, \theta)$:
+\begin{align}
+    \pi(a|s, \theta) &= \frac{e^{\theta_a^T s}}{\sum_{c=0}^{1} e^{\theta_c^T s}} \\
+    &= \frac{e^{\theta_a^T s}}{e^{\theta_a^T s} + e^{\theta_b^T s}} \\
+    &= \frac{1}{1 + e^{(\theta_b - \theta_a)^T s}}
+\end{align}
+where $\theta_a$ and $\theta_b$ are the indices of the two actions. The four continuous state variables are for this purpose simply enumerated, i.e. $s = \begin{pmatrix}s_1&s_2&s_3&s_4 \end{pmatrix}^T$. Differentiating with respect to a single parameter $\theta_{i}$, we get
+\begin{align}
+    \frac{\partial \pi(a|s, \theta)}{\partial \theta_i} &= \frac{s_i e^{(\theta_b - \theta_a)^T s}}{(1 + e^{(\theta_b - \theta_a)^T s})^2} \\
+    &= s_i \frac{1}{1 + e^{(\theta_b - \theta_a)^T s}} \left( 1 - 1 + \frac{e^{(\theta_b - \theta_a)^T s}}{1 + e^{(\theta_b - \theta_a)^T s}}\right) \\
+    &= s_i \pi(a|s, \theta) (1 - \pi(a|s, \theta))
+\end{align}
+
+Combining this for all parameters, we get the gradient of the policy
+
+\begin{align}
+    \frac{\partial \pi(a|s, \theta)}{\partial \theta} &= 
+    \begin{pmatrix}
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{a1}} \\
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{a2}} \\
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{a3}} \\
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{a4}} \\
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{b1}} \\
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{b2}} \\
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{b3}} \\
+        \frac{\partial \pi(a|s, \theta)}{\partial \theta_{b4}}
+    \end{pmatrix} =
+    \begin{pmatrix}
+        s_1 \pi(a|s, \theta)(1 - \pi(a|s, \theta)) \\
+        s_2 \pi(a|s, \theta)(1 - \pi(a|s, \theta))  \\
+        s_3 \pi(a|s, \theta)(1 - \pi(a|s, \theta))  \\
+        s_4 \pi(a|s, \theta)(1 - \pi(a|s, \theta))  \\
+        -s_1 \pi(a|s, \theta)(1 - \pi(a|s, \theta))  \\
+        -s_2 \pi(a|s, \theta)(1 - \pi(a|s, \theta))  \\
+        -s_3 \pi(a|s, \theta)(1 - \pi(a|s, \theta))  \\
+        -s_4 \pi(a|s, \theta)(1 - \pi(a|s, \theta)) 
+    \end{pmatrix} =
+    \begin{pmatrix}
+        s \pi(a|s, \theta)(1 - \pi(a|s, \theta)) \\
+        -s \pi(a|s, \theta)(1 - \pi(a|s, \theta))
+    \end{pmatrix}
+\end{align}
+
+\paragraph*{b) Score function - Gradient of the log policy}
+
+\begin{align}
+    \log \pi(a|s, \theta) = \theta_{a}^T s - \log (e^{\theta_a^T s} + e^{\theta_b^T s})
+\end{align}
+Using the previous result, we can simply use the chain rule for the logarithmic function, for each variable respectively.
+\begin{equation}
+    \log (f(x))' = \frac{f'(x)}{f(x)}
+\end{equation}
+Thus, the gradient of the log policy cancels itself out 
+\begin{align}
+    \nabla \log \pi(a|s, \theta) &= \begin{pmatrix}
+        s(1-\pi(a|s,\theta)) \\ -s (1-\pi(a|s,\theta))
+    \end{pmatrix}
+\end{align}
+
+
+\end{document}
