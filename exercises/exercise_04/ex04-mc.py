@@ -105,7 +105,7 @@ def monte_carlo_es():
             idx_action = idx + (pi[idx],)
             returns[idx_action] += ret
             visits[idx_action] += 1
-            Q[idx_action] += returns[idx_action] / visits[idx_action]
+            Q[idx_action] = returns[idx_action] / visits[idx_action]
             # print(Q[idx])
             # print(pi)
             pi[idx] = np.argmax(Q[idx])
